@@ -21,15 +21,14 @@ def index():
 
 @app.route("/signup", methods=["POST"])
 def signup():
-    data = request.get_json()
-
-    name = data["name"]
-    email = data["email"]
-    password = data["password"]
-    gender = data["gender"]
-    phone = data["phone"]
-    profileUrl = data["profileUrl"]
-    userStatus = data["userStatus"]
+    name = request.form["name"]
+    email = request.form["email"]
+    password = request.form["password"]
+    gender = request.form["gender"]
+    phone = request.form["phone"]
+    profileUrl = request.form["profileUrl"]
+    userStatus = request.form["userStatus"]
+    deviceID = request.form["deviceID"]
     
 
     # Checking if email already exists    
@@ -39,9 +38,12 @@ def signup():
         return jsonify({"message": "Email already exists"})
     
     # Inserting data into database
-    cursor.execute("INSERT INTO users (name, email, password, gender, phoneNum, profileUrl, userStatus) VALUES (%s, %s, %s, %s, %s)", (name, email, password, gender, phone, profileUrl, userStatus))
+    cursor.execute("INSERT INTO users (name, email, password, gender, phoneNum, profileUrl, userStatus, deviceID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (name, email, password, gender, phone, profileUrl, userStatus, deviceID))
     connection.commit()
-    return jsonify({"message": "Account created successfully"})
+    if cursor.rowcount == 1:
+        return jsonify({"message": "User created successfully"})
+    else:
+        return jsonify({"message": "Error creating user"})
 
 
 

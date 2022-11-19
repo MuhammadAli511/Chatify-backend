@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.cloudinary.android.MediaManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     Handler handler;
@@ -15,6 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Map config = new HashMap();
+        config.put("cloud_name", "dit1cdpih");
+        config.put("api_key", "874163382728423");
+        config.put("api_secret", "VCKgXC1iVhfMTn4crtuzENqXV9E");
+        config.put("secure", true);
+        MediaManager.init(this, config);
 
 
         handler = new Handler();

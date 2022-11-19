@@ -252,11 +252,11 @@
             android:layout_height="wrap_content"
             android:paddingVertical="13dp"
             android:text="Sign Up"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="15sp"
             app:backgroundTint="#DFB300"
-            app:cornerRadius="20dp"
-            android:textAllCaps="false">
+            app:cornerRadius="20dp">
 
         </com.google.android.material.button.MaterialButton>
 
