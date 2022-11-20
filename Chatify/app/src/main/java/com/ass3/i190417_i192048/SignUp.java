@@ -135,6 +135,7 @@ public class SignUp extends AppCompatActivity {
                                             public void run() {
                                                 Toast.makeText(SignUp.this, "Server Not Working", Toast.LENGTH_SHORT).show();
                                                 Log.d("error", e.getMessage());
+                                                progressDialog.dismiss();
                                             }
                                         });
                                     }
@@ -148,9 +149,31 @@ public class SignUp extends AppCompatActivity {
                                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intent);
 
+                                        } else if (responseStr.contains("Email already exists")){
+                                            progressDialog.dismiss();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(SignUp.this, "Email already exists", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                        } else if (responseStr.contains("Phone number already exists")){
+                                            progressDialog.dismiss();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(SignUp.this, "Phone number already exists", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         } else {
                                             progressDialog.dismiss();
-                                            Toast.makeText(SignUp.this, "Error Creating Account", Toast.LENGTH_SHORT).show();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(SignUp.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         }
                                     }
                                 });

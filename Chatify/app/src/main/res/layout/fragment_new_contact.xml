@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
     tools:context=".Fragments.NewContactFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add New Contact : "
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:layout_margin="20dp">
+
+        </TextView>
+
+        <EditText
+            android:id="@+id/phoneNumOne"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="60dp"
+            android:padding="10dp"
+            android:background="@drawable/roundedrectangle"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:textColor="@color/black"
+            android:textColorHint="#D4B300">
+        </EditText>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="110dp"
+            android:paddingVertical="10dp"
+            app:backgroundTint="#DFB300"
+            android:id="@+id/addContact"
+            app:cornerRadius="10dp"
+            android:text="Add Contact"
+            android:textColor="@color/white"
+            android:textSize="15dp"
+            android:textAllCaps="false">
+
+        </com.google.android.material.button.MaterialButton>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

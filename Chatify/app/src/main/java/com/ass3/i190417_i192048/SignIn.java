@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -77,21 +79,20 @@ public class SignIn extends AppCompatActivity {
 
                     Request request = new Request.Builder().url("http://10.0.2.2:5000/signin").post(body).build();
                     okhttpclient.newCall(request).enqueue(new Callback() {
-                        @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SignIn.this, "Server Not Working", Toast.LENGTH_SHORT).show();
-                                    Log.d("error", e.getMessage());
-                                }
-                            });
+                            Toast.makeText(SignIn.this, "Server Not Working", Toast.LENGTH_SHORT).show();
+                            Log.d("error", e.getMessage());
+                            progressDialog.dismiss();
                         }
+
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             String responseStr = response.body().string();
                             if (responseStr.contains("User signed in successfully")){
+                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(SignIn.this).edit();
+                                editor.putString("email", emailStr);
+                                editor.apply();
                                 progressDialog.dismiss();
                                 Intent intent = new Intent(SignIn.this, ChatMainScreen.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -99,19 +100,19 @@ public class SignIn extends AppCompatActivity {
 
                             } else {
                                 progressDialog.dismiss();
-                                Toast.makeText(SignIn.this, "Error Signing in Account", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SignIn.this, responseStr, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }
-
 
                     });
                 }
             }
         });
-
-
-
-
 
     }
     
