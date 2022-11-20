@@ -46,6 +46,23 @@ def signup():
         return jsonify({"message": "Error creating user"})
 
 
+@app.route("/signin", methods=["POST"])
+def signin():
+    email = request.form["email"]
+    password = request.form["password"]
+    deviceID = request.form["deviceID"]
+
+    # Checking if email already exists    
+    cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
+    record = cursor.fetchone()
+    if record:
+        cursor.execute("UPDATE users SET deviceID = %s WHERE email = %s", (deviceID, email))
+        connection.commit()
+        return jsonify({"message": "User signed in successfully"})
+    else:
+        return jsonify({"message": "Invalid credentials"})
+
+
 
 if __name__ == "__main__":
     print(index())
