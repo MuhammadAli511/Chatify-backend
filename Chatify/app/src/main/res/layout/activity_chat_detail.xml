@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".ChatDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:id="@+id/toolbar"
+        android:background="@drawable/roundedtoolbar">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/backButton"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24">
+        </ImageView>
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/userImage"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_baseline_person_outline_24"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            app:riv_mutate_background="true"
+            app:riv_corner_radius="15dp">
+        </com.makeramen.roundedimageview.RoundedImageView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:id="@+id/userName">
+            </TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textStyle="bold"
+                android:id="@+id/status">
+            </TextView>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="18dp"
+                android:layout_alignParentEnd="true">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/audioCall"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/ic_baseline_call_24"
+                    android:padding="8dp"
+                    android:scaleType="centerCrop"
+                    android:background="#f4e17a"
+                    android:layout_gravity="center"
+                    app:riv_mutate_background="true"
+                    app:riv_corner_radius="15dp">
+                </com.makeramen.roundedimageview.RoundedImageView>
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/videoCall"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/ic_baseline_videocam_24"
+                    android:layout_marginLeft="20dp"
+                    android:padding="8dp"
+                    android:scaleType="centerCrop"
+                    android:background="#f4e17a"
+                    android:layout_gravity="center"
+                    app:riv_mutate_background="true"
+                    app:riv_corner_radius="15dp">
+                </com.makeramen.roundedimageview.RoundedImageView>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatDetailRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/chatDetailLinearLayout"
+        android:layout_below="@+id/toolbar">
+
+    </androidx.recyclerview.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/chatDetailLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_margin="20dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/roundedrectanglechatbox">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_baseline_camera_alt_24"
+            android:layout_gravity="center"
+            android:id="@+id/selectImageButton"
+            android:layout_marginLeft="16dp">
+        </ImageView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/messageToSend"
+                android:layout_width="230dp"
+                android:layout_height="45dp"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/roundedrectangle"
+                android:hint="Type Your Message"
+                android:inputType="text"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                tools:ignore="TouchTargetSizeCheck">
+
+            </EditText>
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/sendMsg"
+                android:src="@drawable/ic_baseline_send_24"
+                android:padding="8dp"
+                android:layout_marginRight="15dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:background="#f4e17a"
+                app:riv_mutate_background="true"
+                app:riv_corner_radius="15dp">
+            </com.makeramen.roundedimageview.RoundedImageView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

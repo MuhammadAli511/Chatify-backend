@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ass3.i190417_i192048.Adapters.UsersAdapter;
 import com.ass3.i190417_i192048.Models.Users;
 import com.ass3.i190417_i192048.R;
 
@@ -23,10 +24,13 @@ public class ChatsFragment extends Fragment {
     public ChatsFragment() {}
 
     List<Users> list = new ArrayList<>();
+    UsersAdapter adapter;
     RecyclerView recyclerView;
 
     public void getData3(){
         List<String> contactsList = new ArrayList<>();
+        // TODO : Get contacts list from flask server
+
 
     }
 
