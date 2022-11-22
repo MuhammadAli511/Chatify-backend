@@ -124,12 +124,10 @@ public class ChatDetailActivity extends AppCompatActivity {
         senderImage = new String[]{""};
 
 
-        // Getting name and profile picture of sender
-        /*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String emailStr = sp.getString("email", null);
+
         OkHttpClient okhttpclient = new OkHttpClient();
-        RequestBody body = new FormBody.Builder().add("email", emailStr).build();
-        Request request = new Request.Builder().url("http://10.0.2.2:5000/getNamePic").post(body).build();
+        RequestBody body = new FormBody.Builder().add("email", receiverId).build();
+        Request request = new Request.Builder().url("http://10.0.2.2:5000/getStatus").post(body).build();
         okhttpclient.newCall(request).enqueue(new Callback() {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.d("error", e.getMessage());
@@ -138,21 +136,26 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    senderImage[0] = jsonObject.getString("profileUrl");
-                    senderName[0] = jsonObject.getString("name");
-                    // wait for 1 second with exception handling
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    String status1 = jsonObject.getString("userStatus");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            status.setText(status1);
+                        }
+                    });
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        });*/
+        });
 
-        // TODO: Check status of receiver
+
+
+
+
+
+
+
 
         getChats();
 
@@ -217,17 +220,6 @@ public class ChatDetailActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-    // TODO: onResume for Status
 
 
 
