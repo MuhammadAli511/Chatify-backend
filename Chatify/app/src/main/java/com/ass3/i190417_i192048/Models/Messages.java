@@ -1,35 +1,46 @@
 package com.ass3.i190417_i192048.Models;
 
 public class Messages {
-    String userID;
+    String messageID;
+    String sender;
+    String receiver;
     String message;
+    String messageType;
     String timestamp;
-    String chatSendMsgID;
-    String chatReceiveMsgID;
-    String senderRoom;
-    String receiverRoom;
-    String msgType;
-    String imageURL;
 
     public Messages() {}
 
-    public Messages(String userID, String message, String timestamp) {
-        this.userID = userID;
+    public Messages(String id, String sender, String receiver, String message, String messageType, String timestamp) {
+        this.messageID = id;
+        this.sender = sender;
+        this.receiver = receiver;
         this.message = message;
+        this.messageType = messageType;
         this.timestamp = timestamp;
     }
 
-    public Messages(String userID, String message) {
-        this.userID = userID;
-        this.message = message;
+    public String getMessageID() {
+        return messageID;
     }
 
-    public String getUserID() {
-        return userID;
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getMessage() {
@@ -40,59 +51,19 @@ public class Messages {
         this.message = message;
     }
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
     public String getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public String getChatSendMsgID() {
-        return chatSendMsgID;
-    }
-
-    public void setChatSendMsgID(String chatSendMsgID) {
-        this.chatSendMsgID = chatSendMsgID;
-    }
-
-    public String getChatReceiveMsgID() {
-        return chatReceiveMsgID;
-    }
-
-    public void setChatReceiveMsgID(String chatReceiveMsgID) {
-        this.chatReceiveMsgID = chatReceiveMsgID;
-    }
-
-    public String getSenderRoom() {
-        return senderRoom;
-    }
-
-    public void setSenderRoom(String senderRoom) {
-        this.senderRoom = senderRoom;
-    }
-
-    public String getReceiverRoom() {
-        return receiverRoom;
-    }
-
-    public void setReceiverRoom(String receiverRoom) {
-        this.receiverRoom = receiverRoom;
-    }
-
-    public String getMsgType() {
-        return msgType;
-    }
-
-    public void setMsgType(String msgType) {
-        this.msgType = msgType;
-    }
-
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
     }
 }

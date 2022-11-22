@@ -1,8 +1,6 @@
 package com.ass3.i190417_i192048.Fragments;
 
-import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -16,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ass3.i190417_i192048.Adapters.UsersAdapter;
@@ -23,6 +22,7 @@ import com.ass3.i190417_i192048.ChatMainScreen;
 import com.ass3.i190417_i192048.Models.Users;
 import com.ass3.i190417_i192048.R;
 import com.ass3.i190417_i192048.SignIn;
+import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -50,6 +50,8 @@ public class ChatsFragment extends Fragment {
     List<Users> list = new ArrayList<>();
     UsersAdapter adapter;
     RecyclerView recyclerView;
+    ImageView profilePicture;
+    String imageURL;
 
     public void getData3(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -68,7 +70,6 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
-                    // TODO: Last message
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = jsonObject.getJSONArray("contacts");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -101,7 +102,55 @@ public class ChatsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String emailStr = sp.getString("email", null);
+
+        OkHttpClient okhttpclient = new OkHttpClient();
+        RequestBody body = new FormBody.Builder().add("email", emailStr).build();
+        Request request = new Request.Builder().url("http://10.0.2.2:5000/getProfilePic").post(body).build();
+
+
+        okhttpclient.newCall(request).enqueue(new Callback() {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Toast.makeText(getContext(), "Server Not Working", Toast.LENGTH_SHORT).show();
+                Log.d("error", e.getMessage());
+            }
+
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    imageURL = jsonObject.getString("profileUrl");
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("imageURL", imageURL);
+                    editor.apply();
+                    // run on ui thread
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // run when imageURL is not null
+                            if (imageURL != null) {
+                                profilePicture = getActivity().findViewById(R.id.profilePicture);
+                                Glide.with(getContext()).load(imageURL).into(profilePicture);
+                            }
+                        }
+                    });
+
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+
+
+
+
+
+
         View view = inflater.inflate(R.layout.fragment_chats, container, false);
 
         recyclerView = view.findViewById(R.id.chatsRecyclerView);
@@ -112,6 +161,8 @@ public class ChatsFragment extends Fragment {
         // clear list
         list.clear();
         getData3();
+
+
         return view;
     }
 
