@@ -82,10 +82,15 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     String lastMsg = jsonObject.getString("message");
+                    String type = jsonObject.getString("messageType");
                     ((ChatMainScreen)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            holder.lastMessage.setText(lastMsg);
+                            if (type.equals("Text")) {
+                                holder.lastMessage.setText(lastMsg);
+                            } else {
+                                holder.lastMessage.setText("Image");
+                            }
                         }
                     });
                 } catch (JSONException e) {

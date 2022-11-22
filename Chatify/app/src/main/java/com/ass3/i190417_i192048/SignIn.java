@@ -80,7 +80,6 @@ public class SignIn extends AppCompatActivity {
                     Request request = new Request.Builder().url("http://10.0.2.2:5000/signin").post(body).build();
                     okhttpclient.newCall(request).enqueue(new Callback() {
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            Toast.makeText(SignIn.this, "Server Not Working", Toast.LENGTH_SHORT).show();
                             Log.d("error", e.getMessage());
                             progressDialog.dismiss();
                         }

@@ -99,9 +99,7 @@ public class MessageAdapter  extends RecyclerView.Adapter{
                         }
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            // remove from list
                             messagesList.remove(position);
-                            // notify adapter
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

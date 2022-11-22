@@ -1,5 +1,6 @@
 package com.ass3.i190417_i192048;
 
+
 import android.app.Application;
 import android.content.Intent;
 import com.onesignal.OSNotificationOpenedResult;
@@ -34,12 +35,12 @@ public class MyApplication extends Application {
                 String myCustomData0 = data.optString("senderId", null);
                 String myCustomData1 = data.optString("senderName", null);
                 String myCustomData2 = data.optString("senderImage", null);
-//                Intent intent = new Intent(application, ChatDetailActivity.class);
-//                intent.putExtra("userID", myCustomData0);
-//                intent.putExtra("userName", myCustomData1);
-//                intent.putExtra("profileURL", myCustomData2);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                application.startActivity(intent);
+                Intent intent = new Intent(application, ChatDetailActivity.class);
+                intent.putExtra("userID", myCustomData0);
+                intent.putExtra("userName", myCustomData1);
+                intent.putExtra("profileURL", myCustomData2);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                application.startActivity(intent);
             }
         }
     }

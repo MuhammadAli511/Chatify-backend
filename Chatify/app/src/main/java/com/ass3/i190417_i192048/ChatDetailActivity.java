@@ -22,6 +22,9 @@ import com.ass3.i190417_i192048.Adapters.MessageAdapter;
 import com.ass3.i190417_i192048.Models.Messages;
 import com.ass3.i190417_i192048.Models.Users;
 import com.bumptech.glide.Glide;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.onesignal.OneSignal;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,6 +64,9 @@ public class ChatDetailActivity extends AppCompatActivity {
     String receiverId;
     String receiverName;
     String receiverImage;
+    String token;
+    String[] senderName = new String[1];
+    String[] senderImage = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +95,6 @@ public class ChatDetailActivity extends AppCompatActivity {
         receiverName = getIntent().getStringExtra("userName");
         receiverImage = getIntent().getStringExtra("profileURL");
 
-
-
         userName.setText(receiverName);
         Glide.with(this).load(receiverImage).into(userImage);
 
@@ -100,12 +105,23 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
+        selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 55);
+            }
+        });
+
         String senderRoom = senderId + receiverId;
         String receiverRoom = receiverId + senderId;
         senderId1 = senderId;
         receiverId1 = receiverId;
-        final String[] senderName = {""};
-        final String[] senderImage = {""};
+        senderName = new String[]{""};
+        senderImage = new String[]{""};
 
 
         // Getting name and profile picture of sender
@@ -137,7 +153,6 @@ public class ChatDetailActivity extends AppCompatActivity {
         });*/
 
         // TODO: Check status of receiver
-
 
         getChats();
 
@@ -172,19 +187,26 @@ public class ChatDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String res = response.body().string();
-                        if (res.contains("Sent")){
-                            Log.d("success", "Message sent");
-                            // TODO: Send Notification
-                            // runonui thread
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    messageToSend.setText("");
-                                    getChats();
-                                }
-                            });
 
+
+                        try {
+                            Log.d("response", res);
+                            JSONObject jsonObject = new JSONObject(res);
+                            token = jsonObject.getString("deviceID");
+                            OneSignal.postNotification(new JSONObject("{'contents': {'en':'"+message+"'}, 'include_player_ids': ['" + token + "'], 'data': {'senderId': '"+senderId+"', 'senderName': '"+senderName[0]+"' , 'senderImage': '"+senderImage[0]+"' }}"),null);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messageToSend.setText("");
+                                getChats();
+                            }
+                        });
+
+
                     }
                 });
 
@@ -270,16 +292,66 @@ public class ChatDetailActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-    // TODO: send image function
     public void sendImage(Uri val){
-        Log.d("image", val.toString());
+        MediaManager.get().upload(val).callback(new UploadCallback() {
+            @Override
+            public void onStart(String requestId) {}
+            @Override
+            public void onProgress(String requestId, long bytes, long totalBytes) {}
+            @Override
+            public void onSuccess(String requestId, Map resultData) {
+                String imageURL = resultData.get("url").toString();
+                Date c = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                String formattedDate = df.format(c);
+                SimpleDateFormat df1 = new SimpleDateFormat("hh:mm a");
+                String formattedTime = df1.format(c);
+                OkHttpClient okhttpclient = new OkHttpClient();
+                RequestBody body = new FormBody.Builder()
+                        .add("message", imageURL)
+                        .add("receiver", receiverId)
+                        .add("sender", senderId)
+                        .add("timestamp", formattedDate + " " + formattedTime)
+                        .add("messageType", "Image")
+                        .build();
+                Request request = new Request.Builder().url("http://10.0.2.2:5000/sendMsg").post(body).build();
+                okhttpclient.newCall(request).enqueue(new Callback() {
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.d("error", e.getMessage());
+                    }
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String res = response.body().string();
+                        if (res.contains("Sent")){
+                            Log.d("success", "Message sent");
+
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                token = jsonObject.getString("deviceID");
+                                OneSignal.postNotification(new JSONObject("{'contents': {'en':'Image'}, 'include_player_ids': ['" + token + "'], 'data': {'senderId': '"+senderId+"', 'senderName': '"+senderName[0]+"' , 'senderImage': '"+senderImage[0]+"' }}"),null);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getChats();
+                                }
+                            });
+
+                        }
+                    }
+                });
+
+            }
+            @Override
+            public void onError(String requestId, ErrorInfo error) {
+                Toast.makeText(ChatDetailActivity.this, "Image upload failed", Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onReschedule(String requestId, ErrorInfo error) {}
+        }).dispatch();
     }
 
 
