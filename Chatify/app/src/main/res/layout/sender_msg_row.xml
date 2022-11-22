@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/msgParentLayout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="80dp"
+            android:orientation="vertical"
+            android:maxWidth="320dp">
+
+            <TextView
+                android:id="@+id/senderMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_sender"
+                android:inputType="textLongMessage|textMultiLine"
+                android:maxWidth="270dp"
+                android:minWidth="100dp"
+                android:padding="15dp"
+                android:text="asdddddddddddddddddddddasddddddddddddddddddddddddddddsadddddddddddddasdddddsa"
+                android:textColor="@color/white"
+                android:textSize="14dp">
+
+            </TextView>
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/senderImageMsg"
+                android:src="@drawable/person"
+                android:layout_marginLeft="10dp"
+                android:visibility="gone">
+            </ImageView>
+
+            <TextView
+                android:id="@+id/senderTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="15dp"
+                android:text="12:20">
+
+            </TextView>
+
+        </LinearLayout>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/senderImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/person"
+            app:riv_corner_radius="15dp"
+            app:riv_mutate_background="true">
+
+        </com.makeramen.roundedimageview.RoundedImageView>
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

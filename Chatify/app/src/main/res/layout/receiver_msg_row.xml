@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/receiverImage"
+        android:src="@drawable/person"
+        android:layout_marginLeft="20dp"
+        android:padding="5dp"
+        android:scaleType="centerCrop"
+        app:riv_mutate_background="true"
+        app:riv_corner_radius="15dp">
+    </com.makeramen.roundedimageview.RoundedImageView>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/receiverMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="270dp"
+            android:minWidth="100dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="10dp"
+            android:inputType="textLongMessage|textMultiLine"
+            android:background="@drawable/bg_receiver"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:padding="15dp"
+            android:text="asdddddddddddddddddddddasddddddddddddddddddddddddddddsadddddddddddddasdddddsa">
+
+        </TextView>
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/receiverImageMsg"
+            android:src="@drawable/person"
+            android:layout_marginLeft="10dp"
+            android:visibility="gone">
+        </ImageView>
+
+
+
+        <TextView
+            android:id="@+id/receiverTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="13dp"
+            android:layout_marginLeft="15dp"
+            android:text="12:20">
+
+        </TextView>
+
+    </LinearLayout>
+
+</LinearLayout>
