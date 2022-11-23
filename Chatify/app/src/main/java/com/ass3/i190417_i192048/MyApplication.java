@@ -9,7 +9,7 @@ import com.onesignal.OneSignal;
 import org.json.JSONObject;
 
 public class MyApplication extends Application {
-    private static final String ONESIGNAL_APP_ID = "96f1721c-2f55-4ea1-9e50-8f3f29fc47e5";
+    private static final String ONESIGNAL_APP_ID = "f417a1da-f313-4c65-afa9-9db9f1f79aec";
 
     @Override
     public void onCreate() {

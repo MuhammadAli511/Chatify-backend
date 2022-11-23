@@ -5,52 +5,136 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Fragments.ChatsFragment">
-    <RelativeLayout
+
+
+    <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:orientation="horizontal"
-        android:id="@+id/toolbar"
-        android:background="@drawable/roundedtoolbar">
+        android:id="@+id/profileDrawer"
+        android:layout_below="@+id/ab"
+        android:layout_height="match_parent">
 
-       <ImageView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:src="@drawable/ic_baseline_menu_24"
-           android:layout_centerVertical="true"
-           android:layout_marginLeft="20dp">
-
-       </ImageView>
-
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Messages"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:layout_centerInParent="true">
-        </TextView>
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_baseline_person_outline_24">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="horizontal"
+                android:id="@+id/toolbar"
+                android:background="@drawable/roundedtoolbar">
 
-        </ImageView>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_menu_24"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/profileDrawerLoader"
+                    android:layout_marginLeft="20dp">
 
-    </RelativeLayout>
+                </ImageView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:id="@+id/chatsRecyclerView"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Messages"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:layout_centerInParent="true">
+                </TextView>
+
+                <ImageView
+                    android:id="@+id/profilePicture"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:src="@drawable/ic_baseline_person_outline_24">
+
+                </ImageView>
+
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="130dp"
+                android:id="@+id/chatsRecyclerView"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:id="@+id/brownDrawer"
+            android:background="@color/brown"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:id="@+id/profileImage"
+                android:layout_gravity="center">
+            </ImageView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:textColor="@color/yellow"
+                android:textAlignment="center"
+                android:textSize="17dp"
+                android:id="@+id/userName"
+                android:textStyle="bold">
+
+            </TextView>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </View>
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="bottom"
+                android:id="@+id/logout"
+                android:layout_marginBottom="60dp">
+
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:textColor="@color/yellow"
+                    android:textAlignment="center"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="20dp">
+                </TextView>
+
+                <ImageView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/logout">
+                </ImageView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </LinearLayout>

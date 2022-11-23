@@ -77,17 +77,38 @@ def signin():
 
 
 
+@app.route("/updatePass", methods=["POST"])
+def updatePass():
+    email = request.form["email"]
+    password = request.form["password"]
+
+    # Checking if email already exists
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+    record = cursor.fetchone()
+    if record:
+        cursor.execute("UPDATE users SET password = %s WHERE email = %s", (password, email))
+        connection.commit()
+        cursor.close()
+        return jsonify({"message": "done"})
+    else:
+        cursor.close()
+        return jsonify({"message": "Invalid credentials"})
+
+
+
+
 
 @app.route("/getProfilePic", methods=["POST"])
 def getProfilePic():
     email = request.form["email"]
     
     cursor = connection.cursor()
-    cursor.execute("SELECT profileUrl FROM users WHERE email = %s", (email,))
+    cursor.execute("SELECT profileUrl, name FROM users WHERE email = %s", (email,))
     record = cursor.fetchone()
     cursor.close()
     if record:
-        return jsonify({"profileUrl": record[0]})
+        return jsonify({"profileUrl": record[0], "name": record[1]})
     else:
         return jsonify({"message": "Error fetching profile pic"})
 

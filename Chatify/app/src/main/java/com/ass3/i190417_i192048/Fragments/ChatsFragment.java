@@ -1,10 +1,12 @@
 package com.ass3.i190417_i192048.Fragments;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ass3.i190417_i192048.Adapters.UsersAdapter;
@@ -50,8 +54,12 @@ public class ChatsFragment extends Fragment {
     List<Users> list = new ArrayList<>();
     UsersAdapter adapter;
     RecyclerView recyclerView;
-    ImageView profilePicture;
+    ImageView profilePicture, profileDrawerLoader, profileImage;
     String imageURL;
+    DrawerLayout profileDrawer;
+    LinearLayout brownDrawer, logout;
+    TextView userName;
+    String name1;
 
     public void getData3(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -62,7 +70,6 @@ public class ChatsFragment extends Fragment {
 
         okhttpclient.newCall(request).enqueue(new Callback() {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Toast.makeText(getContext(), "Server Not Working", Toast.LENGTH_SHORT).show();
                 Log.d("error", e.getMessage());
             }
 
@@ -116,12 +123,12 @@ public class ChatsFragment extends Fragment {
                 Log.d("error", e.getMessage());
             }
 
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     imageURL = jsonObject.getString("profileUrl");
+                    name1 = jsonObject.getString("name");
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("imageURL", imageURL);
@@ -154,9 +161,44 @@ public class ChatsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chats, container, false);
 
         recyclerView = view.findViewById(R.id.chatsRecyclerView);
+        profileDrawerLoader = view.findViewById(R.id.profileDrawerLoader);
+        profileDrawer = view.findViewById(R.id.profileDrawer);
+        brownDrawer = view.findViewById(R.id.brownDrawer);
+        profileImage = view.findViewById(R.id.profileImage);
+        logout = view.findViewById(R.id.logout);
+        userName = view.findViewById(R.id.userName);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new UsersAdapter(list, getContext());
         recyclerView.setAdapter(adapter);
+
+        profileDrawerLoader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (profileDrawer.isDrawerOpen(brownDrawer)) {
+                    profileDrawer.closeDrawer(brownDrawer);
+                } else {
+                    profileDrawer.openDrawer(brownDrawer);
+                }
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = sp.edit();
+                editor.clear();
+                editor.apply();
+                Intent intent = new Intent(getContext(), SignIn.class);
+                startActivity(intent);
+            }
+        });
+
+        Glide.with(getContext()).load(imageURL).into(profileImage);
+        userName = view.findViewById(R.id.userName);
+        userName.setText(name1);
+
+
 
         // clear list
         list.clear();

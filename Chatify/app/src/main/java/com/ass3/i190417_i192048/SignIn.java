@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.se.omapi.Session;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +19,11 @@ import android.widget.Toast;
 import com.onesignal.OneSignal;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -31,7 +35,7 @@ import okhttp3.Response;
 
 public class SignIn extends AppCompatActivity {
 
-    TextView signup;
+    TextView signup, forgotpassword;
     EditText email, password;
     Button signin;
     ProgressDialog progressDialog;
@@ -45,6 +49,7 @@ public class SignIn extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         signin = findViewById(R.id.signin);
+        forgotpassword = findViewById(R.id.forgotpassword);
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Signing In");
         progressDialog.setMessage("Please wait while we are signing you in");
@@ -55,6 +60,61 @@ public class SignIn extends AppCompatActivity {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
+        });
+
+        forgotpassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (email.getText().toString().isEmpty()) {
+                    email.setError("Please enter your email");
+                    return;
+                } else {
+
+                    String deviceID = OneSignal.getDeviceState().getUserId();
+                    String message = "Your new password is default123";
+                    String newPass = "default123";
+                    String emailStr1 = email.getText().toString();
+                    OkHttpClient okhttpclient = new OkHttpClient();
+                    RequestBody body = new FormBody.Builder()
+                            .add("email", emailStr1)
+                            .add("password", newPass)
+                            .build();
+
+                    Request request = new Request.Builder().url("http://10.0.2.2:5000/updatePass").post(body).build();
+                    okhttpclient.newCall(request).enqueue(new Callback() {
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            Log.d("error", e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            String responseStr = response.body().string();
+                            if (responseStr.contains("done")){
+                                try {
+                                    OneSignal.postNotification(new JSONObject("{'contents': {'en':'"+message+"'}, 'include_player_ids': ['" + deviceID + "'], 'data': {}}"),null);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SignIn.this, "Password Reset Success", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SignIn.this, "Password Reset Failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+
+                    });
+
+                }
             }
         });
 
@@ -69,8 +129,6 @@ public class SignIn extends AppCompatActivity {
                     String passwordStr = password.getText().toString();
                     String deviceID = OneSignal.getDeviceState().getUserId();
                     OkHttpClient okhttpclient = new OkHttpClient();
-
-
                     RequestBody body = new FormBody.Builder()
                             .add("email", emailStr)
                             .add("password", passwordStr)
