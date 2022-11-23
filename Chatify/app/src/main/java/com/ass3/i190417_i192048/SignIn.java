@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.FileObserver;
 import android.preference.PreferenceManager;
 import android.se.omapi.Session;
 import android.util.Log;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -40,10 +43,24 @@ public class SignIn extends AppCompatActivity {
     Button signin;
     ProgressDialog progressDialog;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        String path = Environment.getExternalStorageDirectory()
+                + File.separator + Environment.DIRECTORY_PICTURES
+                + File.separator + "Screenshots" + File.separator;
+        Log.d("asd", path);
+        FileObserver fileObserver = new FileObserver(path, FileObserver.CREATE) {
+            @Override
+            public void onEvent(int event, String path) {
+                Log.d("asd", event + " " + path);
+            }
+        };
+        fileObserver.startWatching();
 
         signup = findViewById(R.id.signup);
         email = findViewById(R.id.email);

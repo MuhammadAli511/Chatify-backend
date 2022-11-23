@@ -5,12 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -73,6 +80,32 @@ public class ChatDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail);
 
+        HandlerThread handlerThread = new HandlerThread("content_observer");
+        handlerThread.start();
+        final Handler handler = new Handler(handlerThread.getLooper()) {
+
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+            }
+        };
+
+        String deviceID = getIntent().getStringExtra("deviceID");
+        Log.d("deviceID", deviceID);
+        // detect changes in the media store
+        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                super.onChange(selfChange, uri);
+                try {
+                    Log.d("ScreenShot", "ScreenShot detected");
+                    OneSignal.postNotification(new JSONObject("{'contents': {'en':'" + "Screenshot detected" + "'}, 'include_player_ids': ['" + deviceID + "']}"), null);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         backButton = findViewById(R.id.backButton);
         userImage = findViewById(R.id.userImage);
         userName = findViewById(R.id.userName);
@@ -94,6 +127,7 @@ public class ChatDetailActivity extends AppCompatActivity {
         receiverId = getIntent().getStringExtra("userID");
         receiverName = getIntent().getStringExtra("userName");
         receiverImage = getIntent().getStringExtra("profileURL");
+
 
         userName.setText(receiverName);
         Glide.with(this).load(receiverImage).into(userImage);
@@ -148,13 +182,6 @@ public class ChatDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
-
-
-
 
 
         getChats();
