@@ -5,12 +5,9 @@ from mysql.connector import Error, errorcode
 
 app = Flask(__name__)
 
-try:
-    connection = mysql.connector.connect(host='localhost', database='smd', user='root', password='1234')
-except Error as e:
-    print(e)
+# connect to mysql
 
-
+connection = mysql.connector.connect(host='localhost',database='smd', user='root', password='root1234')
 @app.route("/")
 def index():
     return "Server Health: Good"
@@ -29,7 +26,7 @@ def signup():
     
 
     # Checking if email already exists  
-    cursor = connection.cursor()  
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
     record = cursor.fetchone()
     if record:
