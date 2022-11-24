@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.cloudinary.Cloudinary;
 import com.cloudinary.android.MediaManager;
 
 import java.util.HashMap;
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         config.put("api_secret", "VCKgXC1iVhfMTn4crtuzENqXV9E");
         config.put("secure", true);
         MediaManager.init(this, config);
+
+
 
 
         handler = new Handler();

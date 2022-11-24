@@ -1,7 +1,6 @@
 import mysql.connector
 from flask import Flask, request, jsonify
 from mysql.connector import Error, errorcode
-from flask_cors import CORS
 
 
 app = Flask(__name__)
@@ -9,8 +8,7 @@ app = Flask(__name__)
 try:
     connection = mysql.connector.connect(host='localhost', database='smd', user='root', password='1234')
 except Error as e:
-    error = "message: Error while connecting to MySQL error : " + e
-    print(error)
+    print(e)
 
 
 @app.route("/")

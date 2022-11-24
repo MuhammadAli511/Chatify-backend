@@ -2,17 +2,24 @@ package com.ass3.i190417_i192048;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -29,9 +36,12 @@ import com.ass3.i190417_i192048.Adapters.MessageAdapter;
 import com.ass3.i190417_i192048.Models.Messages;
 import com.ass3.i190417_i192048.Models.Users;
 import com.bumptech.glide.Glide;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.utils.ObjectUtils;
 import com.onesignal.OneSignal;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,11 +49,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +84,9 @@ public class ChatDetailActivity extends AppCompatActivity {
     String receiverName;
     String receiverImage;
     String token;
+    MediaRecorder mediaRecorder;
+    String pathSave;
+    boolean isRecording = false;
     String[] senderName = new String[1];
     String[] senderImage = new String[1];
 
@@ -132,11 +147,20 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         userName.setText(receiverName);
         Glide.with(this).load(receiverImage).into(userImage);
+        if(isMicrophonePresent())
+            getMicrophonePermission();
 
         recordAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isRecording){
+                    stopRecording();
+                    Uri uri = Uri.fromFile(new File(pathSave));
+                    //sendAudio(url);
 
+                } else {
+                    startRecording();
+                }
             }
         });
 
@@ -366,6 +390,99 @@ public class ChatDetailActivity extends AppCompatActivity {
             @Override
             public void onReschedule(String requestId, ErrorInfo error) {}
         }).dispatch();
+    }
+
+    boolean isMicrophonePresent(){
+        return this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
+    }
+
+    void getMicrophonePermission(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_DENIED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.RECORD_AUDIO},100);
+        }
+    }
+
+    private String getRecordingFilePath(){
+        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        File musicDirectory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        File file = new File(musicDirectory,System.currentTimeMillis() + ".mp3");
+        return file.getPath();
+    }
+
+    void startRecording() {
+        isRecording = true;
+        pathSave = getRecordingFilePath();
+        Log.d("pathSave", pathSave);
+        setupMediaRecorder();
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setupMediaRecorder() {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setOutputFile(pathSave);
+    }
+
+    void stopRecording() {
+        isRecording = false;
+        mediaRecorder.stop();
+    }
+
+
+
+    public void sendAudio(String url){
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+        SimpleDateFormat df1 = new SimpleDateFormat("hh:mm a");
+        String formattedTime = df1.format(c);
+        OkHttpClient okhttpclient = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("message", url)
+                .add("receiver", receiverId)
+                .add("sender", senderId)
+                .add("timestamp", formattedDate + " " + formattedTime)
+                .add("messageType", "Audio")
+                .build();
+        Request request = new Request.Builder().url("http://10.0.2.2:5000/sendMsg").post(body).build();
+        okhttpclient.newCall(request).enqueue(new Callback() {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d("error", e.getMessage());
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String res = response.body().string();
+                if (res.contains("Sent")){
+                    Log.d("success", "Message sent");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        token = jsonObject.getString("deviceID");
+                        OneSignal.postNotification(new JSONObject("{'contents': {'en':'Image'}, 'include_player_ids': ['" + token + "'], 'data': {'senderId': '"+senderId+"', 'senderName': '"+senderName[0]+"' , 'senderImage': '"+senderImage[0]+"' }}"),null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getChats();
+                        }
+                    });
+
+                }
+            }
+        });
     }
 
 }
