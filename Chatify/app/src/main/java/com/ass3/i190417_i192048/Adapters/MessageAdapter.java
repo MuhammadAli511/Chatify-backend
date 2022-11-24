@@ -1,12 +1,18 @@
 package com.ass3.i190417_i192048.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -69,7 +75,7 @@ public class MessageAdapter  extends RecyclerView.Adapter{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Messages messages = messagesList.get(position);
         Log.d("Message Type", holder.getClass().toString());
         if (holder.getClass() == SenderViewHolder.class) {
@@ -86,7 +92,7 @@ public class MessageAdapter  extends RecyclerView.Adapter{
             ((SenderViewHolder) holder).senderTime.setText(messages.getTimestamp().toString());
             ((SenderViewHolder) holder).senderImage.setImageResource(R.drawable.person);
 
-            ((SenderViewHolder) holder).msgParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            ((SenderViewHolder) holder).senderImage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     String id = messages.getMessageID();
@@ -108,6 +114,54 @@ public class MessageAdapter  extends RecyclerView.Adapter{
                             });
                         }
                     });
+                    return true;
+                }
+            });
+            ((SenderViewHolder) holder).senderMsg.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (messages.getMessageType().equals("Text")) {
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        View view = inflater.inflate(R.layout.edit_msg, null);
+                        EditText editedMsg = view.findViewById(R.id.editedMsg);
+                        Button send = view.findViewById(R.id.send);
+                        Button cancel = view.findViewById(R.id.cancel);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(view);
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        send.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String id = messages.getMessageID();
+                                String newMsg = editedMsg.getText().toString();
+                                OkHttpClient okhttpclient = new OkHttpClient();
+                                RequestBody body = new FormBody.Builder().add("id", id).add("message", newMsg).build();
+                                Request request1 = new Request.Builder().url("http://10.0.2.2:5000/updateMsg").post(body).build();
+                                okhttpclient.newCall(request1).enqueue(new Callback() {
+                                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                        Log.d("error", e.getMessage());
+                                    }
+                                    @Override
+                                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                        dialog.dismiss();
+                                        messages.setMessage(newMsg);
+                                        ((Activity) context).runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
                     return true;
                 }
             });

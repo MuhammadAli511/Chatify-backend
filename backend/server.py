@@ -160,7 +160,7 @@ def getLastMsg():
     sender = request.form["sender"]
 
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM chat WHERE receiver = %s AND sender = %s ORDER BY timestamp DESC LIMIT 1", (receiver, sender))
+    cursor.execute("SELECT * FROM chat WHERE receiver = %s AND sender = %s OR receiver = %s AND sender = %s ORDER BY timestamp DESC LIMIT 1", (receiver, sender, sender, receiver))
     record = cursor.fetchone()
     cursor.close()
 
@@ -201,7 +201,23 @@ def deleteMsg():
     else:
         cursor.close()
         return jsonify({"message": "Error deleting message"})
-    
+
+
+@app.route("/updateMsg", methods=["POST"])
+def updateMsg():
+    id = request.form["id"]
+    message = request.form["message"]
+
+    cursor = connection.cursor()
+    cursor.execute("UPDATE chat SET message = %s WHERE id = %s", (message, id))
+    connection.commit()
+
+    if cursor.rowcount == 1:
+        cursor.close()
+        return jsonify({"message": "Message updated successfully"})
+    else:
+        cursor.close()
+        return jsonify({"message": "Error updating message"})
 
 
 
@@ -214,6 +230,7 @@ def getContacts():
     cursor.execute("SELECT userID FROM users WHERE email = %s", (email,))
     record = cursor.fetchone()
     if record:
+        id = record[0]
         id = record[0]
         # create a list of contacts
         contacts = []
