@@ -127,10 +127,18 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:src="@drawable/ic_baseline_mic_24"
+            android:layout_gravity="center"
+            android:id="@+id/recordAudioButton"
+            android:layout_marginLeft="10dp">
+        </ImageView>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_baseline_camera_alt_24"
             android:layout_gravity="center"
             android:id="@+id/selectImageButton"
-            android:layout_marginLeft="16dp">
+            android:layout_marginLeft="14dp">
         </ImageView>
 
         <RelativeLayout
@@ -144,7 +152,7 @@
                 android:layout_height="45dp"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="8dp"
                 android:background="@drawable/roundedrectangle"
                 android:hint="Type Your Message"
                 android:inputType="text"

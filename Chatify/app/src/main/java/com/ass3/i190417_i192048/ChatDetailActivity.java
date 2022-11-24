@@ -57,7 +57,7 @@ import okhttp3.Response;
 
 public class ChatDetailActivity extends AppCompatActivity {
 
-    ImageView backButton, userImage, sendMsg;
+    ImageView backButton, userImage, sendMsg, recordAudioButton;
     TextView userName, status;
     EditText messageToSend;
     RecyclerView chatDetailRecyclerView;
@@ -113,6 +113,7 @@ public class ChatDetailActivity extends AppCompatActivity {
         messageToSend = findViewById(R.id.messageToSend);
         status = findViewById(R.id.status);
         selectImageButton = findViewById(R.id.selectImageButton);
+        recordAudioButton = findViewById(R.id.recordAudioButton);
 
 
         chatDetailRecyclerView = findViewById(R.id.chatDetailRecyclerView);
@@ -131,6 +132,13 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         userName.setText(receiverName);
         Glide.with(this).load(receiverImage).into(userImage);
+
+        recordAudioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,8 +164,6 @@ public class ChatDetailActivity extends AppCompatActivity {
         receiverId1 = receiverId;
         senderName = new String[]{""};
         senderImage = new String[]{""};
-
-
 
         OkHttpClient okhttpclient = new OkHttpClient();
         RequestBody body = new FormBody.Builder().add("email", receiverId).build();
@@ -185,9 +191,6 @@ public class ChatDetailActivity extends AppCompatActivity {
 
 
         getChats();
-
-
-
         sendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,12 +246,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
-
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -267,8 +265,6 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     public void getChats(){
         OkHttpClient okhttpclient = new OkHttpClient();
@@ -309,7 +305,6 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
     }
-
 
     public void sendImage(Uri val){
         MediaManager.get().upload(val).callback(new UploadCallback() {
@@ -372,19 +367,5 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onReschedule(String requestId, ErrorInfo error) {}
         }).dispatch();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
