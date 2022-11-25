@@ -93,7 +93,13 @@ public class ChatsFragment extends Fragment {
                         Users tempUser = new Users(name, email, password, imageURL, gender, phoneNum, userID, deviceID, status);
                         list.add(tempUser);
                     }
-                    adapter.notifyDataSetChanged();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter = new UsersAdapter(list, getContext());
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
 
 
                 } catch (JSONException e) {
@@ -119,7 +125,6 @@ public class ChatsFragment extends Fragment {
 
         okhttpclient.newCall(request).enqueue(new Callback() {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Toast.makeText(getContext(), "Server Not Working", Toast.LENGTH_SHORT).show();
                 Log.d("error", e.getMessage());
             }
 

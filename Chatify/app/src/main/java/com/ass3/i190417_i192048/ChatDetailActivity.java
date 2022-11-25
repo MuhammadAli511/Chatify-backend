@@ -49,10 +49,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -155,8 +159,12 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isRecording){
                     stopRecording();
-                    Uri uri = Uri.fromFile(new File(pathSave));
-                    //sendAudio(url);
+                    //Uri uri = Uri.fromFile(new File(pathSave));
+                    try {
+                        sendAudio(pathSave);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 } else {
                     startRecording();
@@ -440,49 +448,22 @@ public class ChatDetailActivity extends AppCompatActivity {
 
 
 
-    public void sendAudio(String url){
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        String formattedDate = df.format(c);
-        SimpleDateFormat df1 = new SimpleDateFormat("hh:mm a");
-        String formattedTime = df1.format(c);
-        OkHttpClient okhttpclient = new OkHttpClient();
-        RequestBody body = new FormBody.Builder()
-                .add("message", url)
-                .add("receiver", receiverId)
-                .add("sender", senderId)
-                .add("timestamp", formattedDate + " " + formattedTime)
-                .add("messageType", "Audio")
-                .build();
-        Request request = new Request.Builder().url("http://10.0.2.2:5000/sendMsg").post(body).build();
-        okhttpclient.newCall(request).enqueue(new Callback() {
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.d("error", e.getMessage());
-            }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String res = response.body().string();
-                if (res.contains("Sent")){
-                    Log.d("success", "Message sent");
+    public void sendAudio(String url) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(url));
+        int read;
+        byte[] buff = new byte[1024];
+        while ((read = in.read(buff)) > 0)
+        {
+            out.write(buff, 0, read);
+        }
+        out.flush();
+        byte[] audioBytes = out.toByteArray();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            final String audioData= Base64.getEncoder().encodeToString(audioBytes);
+            Log.d("audioData", audioData + " Hello");
+        }
 
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        token = jsonObject.getString("deviceID");
-                        OneSignal.postNotification(new JSONObject("{'contents': {'en':'Image'}, 'include_player_ids': ['" + token + "'], 'data': {'senderId': '"+senderId+"', 'senderName': '"+senderName[0]+"' , 'senderImage': '"+senderImage[0]+"' }}"),null);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getChats();
-                        }
-                    });
-
-                }
-            }
-        });
     }
 
 }
